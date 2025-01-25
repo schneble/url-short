@@ -52,7 +52,7 @@ var tmpl *template.Template
 func connectMongoDB() error {
 	uri := os.Getenv("MONGODB_URI")
 	if uri == "" {
-		return fmt.Errorf("MONGODB_URI not set")
+		return fmt.Errorf("MONGODB_URI environment variable is not set")
 	}
 
 	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
@@ -60,12 +60,12 @@ func connectMongoDB() error {
 
 	client, err := mongo.Connect(ctx, options.Client().ApplyURI(uri))
 	if err != nil {
-		return err
+		return fmt.Errorf("failed to connect to MongoDB: %w", err)
 	}
 
 	err = client.Ping(ctx, nil)
 	if err != nil {
-		return err
+		return fmt.Errorf("failed to ping MongoDB: %w", err)
 	}
 
 	mongoClient = client
